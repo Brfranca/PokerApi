@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Poker.Service.DTOs.Token;
 
 namespace Poker.Service.Interfaces
 {
     public interface ITokenService
     {
+        TokenResponse GenerateToken(TokenRequest tokenRequest);
+        bool Validate(TokenRequest tokenRequest);
     }
 }

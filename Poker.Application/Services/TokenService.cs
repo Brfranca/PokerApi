@@ -1,47 +1,52 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Poker.Service.DTOs.Token;
-using System;
-using System.Collections.Generic;
+using Poker.Service.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Poker.Service.Services
 {
-    public class TokenService
+    public class TokenService : ITokenService
     {
-        public TokenResponse BuildToken(TokenRequest tokenRequest)
+        private readonly IConfiguration _configuration;
+
+        public TokenService(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+        //TODO azure key vault
+        public TokenResponse GenerateToken(TokenRequest tokenRequest)
         {
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.UniqueName, tokenRequest.Email),
+                new Claim(JwtRegisteredClaimNames.Email, tokenRequest.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("afsdkjasjflxswafsdklk434orqiwup3457u-34oewir4irroqwiffv48mfs"));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var expiration = DateTime.UtcNow.AddHours(2);
-
-            JwtSecurityToken token = new JwtSecurityToken(
-               issuer: null,
-               audience: null,
-               claims: claims,
-               expires: expiration,
-               signingCredentials: creds);
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(15),
+                signingCredentials: creds);
 
             return new TokenResponse()
             {
                 Token = "Bearer " + new JwtSecurityTokenHandler().WriteToken(token),
-                Expiration = expiration
+                Expiration = token.ValidTo
             };
         }
 
-        //internal bool Validate(TokenRequest userInfo)
-        //{
+        public bool Validate(TokenRequest tokenRequest)
+        {
+            return true;
         //    return userInfo.Username == "" && userInfo.Password == "";
-        //}
+        }
     }
 }
