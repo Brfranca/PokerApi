@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Poker.Service.Interfaces
+namespace Poker.Service.DTOs.Client
 {
-    public interface ITokenService
+    public class ClientRequest
     {
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Poker.Service.DTOs.User;
-using Poker.Service.Interfaces;
+using Poker.Service.Interfaces.Services;
 
 namespace Poker.Api.Controllers
 {

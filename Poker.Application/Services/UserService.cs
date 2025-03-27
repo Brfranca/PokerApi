@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
+using Poker.CrossCutting.Extensions;
 using Poker.Domain.Models;
 using Poker.Domain.Repositories;
 using Poker.Infra.Config;
 using Poker.Service.DTOs.User;
-using Poker.Service.Interfaces;
+using Poker.Service.Interfaces.Services;
 
 namespace Poker.Service.Services
 {
@@ -12,16 +13,16 @@ namespace Poker.Service.Services
         private readonly Context _context;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-
         public UserService(Context context, IUserRepository userRepository, IMapper mapper)
         {
-            this._context = context;
-            this._userRepository = userRepository;
-            this._mapper = mapper;
+            _context = context;
+            _userRepository = userRepository;
+            _mapper = mapper;
         }
 
         public async Task Create(UserRequest user)
         {
+            user.Password = HashExtension.Hash(user.Password);
             var userModel = _mapper.Map<UserModel>(user);
             await _userRepository.AddAsync(userModel);
             await _context.SaveChangesAsync(); //TODO metodo para validar a transação

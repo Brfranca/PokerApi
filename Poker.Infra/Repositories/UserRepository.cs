@@ -2,11 +2,6 @@
 using Poker.Domain.Models;
 using Poker.Domain.Repositories;
 using Poker.Infra.Config;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Poker.Infra.Repositories
 {
@@ -14,6 +9,11 @@ namespace Poker.Infra.Repositories
     {
         public UserRepository(Context context) : base(context)
         {
+        }
+
+        public async Task<UserModel?> GetByEmail(string email)
+        {
+            return await _set.FirstOrDefaultAsync(d => d.Email == email);
         }
     }
 }

@@ -9,7 +9,6 @@ namespace Poker.Infra.Repositories
     public class Repository<TModel> : IRepository<TModel> where TModel : class
     {
         protected readonly DbSet<TModel> _set;
-
         protected readonly Context _context;
         public Repository(Context context)
         {
