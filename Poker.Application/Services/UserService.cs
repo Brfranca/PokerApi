@@ -22,7 +22,7 @@ namespace Poker.Service.Services
 
         public async Task Create(UserRequest user)
         {
-            user.Password = HashExtension.Hash(user.Password);
+            user.Password = user.Password.Hash();
             var userModel = _mapper.Map<UserModel>(user);
             await _userRepository.AddAsync(userModel);
             await _context.SaveChangesAsync(); //TODO metodo para validar a transação
